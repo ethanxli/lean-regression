@@ -1,0 +1,179 @@
+\chapter{Fixed-design least squares}
+
+The formalization is coordinate-free.  Textbook matrices are continuous linear maps between real
+Hilbert spaces; transpose is the Hilbert adjoint; covariance matrices are bilinear forms.  The
+parameter space is finite dimensional, while the observation space may be any complete real
+inner-product space.
+
+\begin{definition}[Full-rank fixed design]\label{def:fixed-design}
+A fixed design is a continuous linear map $X:P\to O$ with trivial kernel.  This is the abstract
+form of a nonstochastic matrix with full column rank.
+\lean{LeanRegression.FixedDesign}
+\leanok
+\end{definition}
+
+\begin{definition}[OLS]\label{def:ols}
+The Gram operator is $G=X^*X$.  Full column rank makes $G$ invertible, and
+$\OLS=G^{-1}X^*$.
+\uses{def:fixed-design}
+\lean{LeanRegression.FixedDesign.ols}
+\leanok
+\end{definition}
+
+\begin{theorem}[Least-squares decomposition]\label{thm:ols-decomposition}
+For every observation $y$ and coefficient $\beta$,
+\[
+ \lVert y-X\beta\rVert^2
+ = \lVert y-X\widehat\beta_{\OLS}\rVert^2
+   + \lVert X(\widehat\beta_{\OLS}-\beta)\rVert^2.
+\]
+Consequently OLS is the unique least-squares minimizer.
+\uses{def:ols}
+\lean{LeanRegression.FixedDesign.ols_squaredError_decomposition}
+\leanok
+\end{theorem}
+
+\chapter{Frisch--Waugh--Lovell}
+
+\begin{definition}[Residualization]\label{def:residualize}
+For a nuisance subspace $U$, let $M_U=I-P_U$ be orthogonal residualization.
+\lean{LeanRegression.residualize}
+\leanok
+\end{definition}
+
+\begin{theorem}[Scalar FWL]\label{thm:fwl-scalar}
+If the regressor of interest is not in $U$, the coefficient satisfying the profiled joint normal
+equation equals the coefficient from regressing $M_Uy$ on $M_Ux$.
+\uses{def:residualize}
+\lean{LeanRegression.frischWaughLovell}
+\leanok
+\end{theorem}
+
+\begin{theorem}[Vector FWL]\label{thm:fwl-vector}
+For a finite family of regressors whose residualized Gram matrix is nonsingular, every solution of
+the profiled joint normal equations equals the residualized-regression coefficient vector.
+\uses{def:residualize,thm:fwl-scalar}
+\lean{LeanRegression.vectorFrischWaughLovell}
+\leanok
+\end{theorem}
+
+\begin{theorem}[Partitioned OLS endpoint]\label{thm:fwl-partitioned}
+For a full-rank joint design with a nuisance block and a finite regressor block, the regressor
+block of joint OLS is exactly the vector partial-regression coefficient.
+\uses{def:ols,thm:fwl-vector}
+\lean{LeanRegression.partitionedOls_regressorBlock_eq_vectorPartialRegressionCoefficient}
+\leanok
+\end{theorem}
+
+\chapter{Gauss--Markov}
+
+\begin{definition}[Response law and isotropic covariance]\label{def:response-law}
+At parameter $\beta$, observations have law $\operatorname{Law}(X\beta+\varepsilon)$.
+The error law is isotropic with scale $\sigma^2$ when
+\[
+ \Cov(\varepsilon)(u,v)=\sigma^2\langle u,v\rangle
+\]
+for every pair of observation directions.  Centering is a separate assumption.
+\uses{def:fixed-design}
+\lean{LeanRegression.FixedDesign.responseLaw}
+\lean{LeanRegression.IsIsotropicCovariance}
+\leanok
+\end{definition}
+
+\begin{definition}[Linear design-unbiased estimator]\label{def:linear-unbiased}
+A competing linear estimator $A:O\to P$ is design-unbiased when $AX=I_P$.  For a centered error
+law this implies $\E_\beta[A(X\beta+\varepsilon)]=\beta$ for every $\beta$.
+\uses{def:fixed-design}
+\lean{LeanRegression.FixedDesign.IsLinearUnbiasedEstimator}
+\leanok
+\end{definition}
+
+\begin{lemma}[Orthogonal contrast decomposition]\label{lem:contrast-orthogonal}
+For a contrast $c$, every unbiased observation weight is the OLS weight plus a vector orthogonal
+to the design range.  Its squared norm is therefore the OLS squared norm plus a nonnegative
+squared gap.
+\uses{def:ols,def:linear-unbiased}
+\lean{LeanRegression.FixedDesign.contrastWeight_norm_sq_decomposition}
+\leanok
+\end{lemma}
+
+\begin{theorem}[Exact covariance gap]\label{thm:gm-gap}
+For every linear design-unbiased estimator $A$ and parameter direction $u$,
+\[
+ \Cov(A\varepsilon)(u,u)
+ = \Cov(\OLS\,\varepsilon)(u,u)
+   + \sigma^2\lVert(A-\OLS)^*u\rVert^2.
+\]
+\uses{def:response-law,lem:contrast-orthogonal}
+\lean{LeanRegression.FixedDesign.gaussMarkov_estimatorCovariance_gap}
+\leanok
+\end{theorem}
+
+\begin{theorem}[Algebraic BLUE]\label{thm:gm-blue}
+If $\sigma^2\geq0$, then $\Cov(A\varepsilon)-\Cov(\OLS\,\varepsilon)$ is positive semidefinite.
+Equivalently, every scalar parameter contrast has at least the OLS variance.
+\uses{thm:gm-gap}
+\lean{LeanRegression.FixedDesign.gaussMarkov_blue}
+\leanok
+\end{theorem}
+
+\begin{lemma}[Expectation bridge]\label{lem:expectation-bridge}
+If $AX=I_P$, the error is integrable, and $\E[\varepsilon]=0$, then
+$\E_\beta[A(X\beta+\varepsilon)]=\beta$ for every $\beta$.
+\uses{def:linear-unbiased}
+\lean{LeanRegression.FixedDesign.integral_estimate_response}
+\leanok
+\end{lemma}
+
+\begin{theorem}[Audited Gauss--Markov theorem]\label{thm:gm-audited}
+Suppose the design has full column rank, the error law is centered and square-integrable, and its
+covariance is $\sigma^2 I$ with $\sigma^2\geq0$.  OLS and every competing linear estimator $A$
+with $AX=I_P$ are unbiased for every parameter value, and for every parameter value
+\[
+ \Cov_\beta(Ay)-\Cov_\beta(\OLS\,y)\succeq0.
+\]
+Thus OLS is BLUE in Loewner order.  Gaussianity and independence are not assumptions.
+\uses{def:response-law,thm:gm-blue,lem:expectation-bridge}
+\lean{LeanRegression.FixedDesign.gaussMarkov_blue_centered}
+\leanok
+\end{theorem}
+
+\chapter{Extensions}
+
+\begin{theorem}[Aitken--GLS]\label{thm:aitken}
+If an invertible bounded whitening transformation makes the error covariance spherical, then GLS
+is BLUE.  The proof transports the exact Gauss--Markov gap through whitening.
+\uses{thm:gm-gap}
+\lean{LeanRegression.FixedDesign.aitken_gls_blue}
+\leanok
+\end{theorem}
+
+\begin{theorem}[Conditional mean prediction]\label{thm:conditional-prediction}
+Among all square-integrable predictors measurable with respect to the available information,
+conditional expectation uniquely minimizes mean squared error.  The proof is the Pythagorean
+identity in $L^2$.
+\lean{LeanRegression.conditionalPredictor_minimal}
+\leanok
+\end{theorem}
+
+\chapter{Statement discipline}
+
+The repository's statement audit classifies every hypothesis of Theorem~\ref{thm:gm-audited} as
+verbatim textbook content, an equivalent basis-free encoding, a genuine generalization, or Lean
+bookkeeping.  In particular it records that covariance isotropy does not imply a zero mean, that
+unbiasedness is uniform in $\beta$, and that ``best'' is the Loewner order rather than a comparison
+of one chosen coordinate variance.
+
+\begin{thebibliography}{9}
+\bibitem{Davidson2018GM}
+J. Davidson, \emph{An Introduction to Econometric Theory}, Chapter 8: The Gauss--Markov Theorem,
+Wiley, 2018. \url{https://doi.org/10.1002/9781119484905.ch8}.
+
+\bibitem{Davidson2018FWL}
+J. Davidson, \emph{An Introduction to Econometric Theory}, Chapter 11: Partitioning and
+Specification, Wiley, 2018. \url{https://doi.org/10.1002/9781119484905.ch11}.
+
+\bibitem{DavidsonMacKinnon2004}
+R. Davidson and J. G. MacKinnon, \emph{Econometric Theory and Methods}, Oxford University Press,
+2004, Sections 3.2--3.5. \url{https://qed.econ.queensu.ca/ETM/etm-info.html}.
+\end{thebibliography}

@@ -1,0 +1,36 @@
+name: Mathlib master compatibility
+
+on:
+  schedule:
+    - cron: "17 6 * * 3"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: mathlib-master
+  cancel-in-progress: true
+
+jobs:
+  compatibility:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+
+      - name: Select Mathlib master and its Lean toolchain
+        shell: bash
+        run: |
+          curl --fail --silent --show-error --location \
+            https://raw.githubusercontent.com/leanprover-community/mathlib4/master/lean-toolchain \
+            --output lean-toolchain
+          sed --in-place '0,/rev = "v[^"]*"/s//rev = "master"/' lakefile.toml
+          rm -f lake-manifest.json
+
+      - name: Build against Mathlib master
+        uses: leanprover/lean-action@38fbc41a8c28c4cbaec22d7f7de508ec2e7c0dd9 # v1.5.0
+        with:
+          build: true
+          lint: false
+          use-mathlib-cache: false

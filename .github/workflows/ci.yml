@@ -1,0 +1,34 @@
+name: Pinned CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: pinned-ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+
+      - name: Build and lint pinned project
+        uses: leanprover/lean-action@38fbc41a8c28c4cbaec22d7f7de508ec2e7c0dd9 # v1.5.0
+        with:
+          build: true
+          lint: true
+          mk_all-check: true
+
+      - name: Check blueprint declaration links
+        run: lake exe checkdecls blueprint/lean_decls
+
+      - name: Verify committed axiom certificate
+        run: bash scripts/check-axioms.sh

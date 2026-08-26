@@ -1,0 +1,5 @@
+'LeanRegression.frischWaughLovell' depends on axioms: [propext, Classical.choice, Quot.sound]
+'LeanRegression.vectorFrischWaughLovell' depends on axioms: [propext, Classical.choice, Quot.sound]
+'LeanRegression.FixedDesign.gaussMarkov_blue_centered' depends on axioms: [propext, Classical.choice, Quot.sound]
+'LeanRegression.FixedDesign.aitken_gls_blue' depends on axioms: [propext, Classical.choice, Quot.sound]
+'LeanRegression.conditionalPredictor_minimal' depends on axioms: [propext, Classical.choice, Quot.sound]

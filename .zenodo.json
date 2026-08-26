@@ -1,0 +1,18 @@
+{
+  "title": "Lean Regression: formally verified regression theory in Lean 4",
+  "description": "A coordinate-free Lean 4 formalization of ordinary least squares, Frisch–Waugh–Lovell, Gauss–Markov, generalized least squares, and conditional-expectation prediction.",
+  "creators": [
+    {
+      "name": "Li, Ethan"
+    }
+  ],
+  "license": "Apache-2.0",
+  "upload_type": "software",
+  "access_right": "open",
+  "keywords": [
+    "Lean 4",
+    "formal verification",
+    "regression",
+    "econometrics"
+  ]
+}

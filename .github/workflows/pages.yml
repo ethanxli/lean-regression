@@ -1,0 +1,42 @@
+name: Blueprint and API documentation
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: github-pages
+  cancel-in-progress: true
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    env:
+      PIP_CONSTRAINT: blueprint/constraints.txt
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          fetch-depth: 0
+
+      - name: Build and lint project
+        uses: leanprover/lean-action@38fbc41a8c28c4cbaec22d7f7de508ec2e7c0dd9 # v1.5.0
+        with:
+          build: true
+          lint: true
+          mk_all-check: true
+
+      - name: Compile blueprint, validate declarations, and publish API docs
+        id: documentation
+        uses: leanprover-community/docgen-action@56023ee2a4b3630c1071825be5bafdb43f540bbd
+        with:
+          blueprint: true
+          build-page: false
+          homepage: generated_site
+          references: references.bib

@@ -1,0 +1,32 @@
+name = "lean_regression"
+version = "0.1.0"
+keywords = ["mathematics", "statistics", "regression", "econometrics"]
+defaultTargets = ["LeanRegression"]
+lintDriver = "batteries/runLinter"
+lintDriverArgs = ["LeanRegression"]
+
+[leanOptions]
+pp.unicode.fun = true
+autoImplicit = false
+relaxedAutoImplicit = false
+weak.linter.mathlibStandardSet = true
+maxSynthPendingDepth = 3
+
+[[require]]
+name = "checkdecls"
+git = "https://github.com/PatrickMassot/checkdecls.git"
+rev = "master"
+
+[[require]]
+name = "doc-gen4"
+git = "https://github.com/leanprover/doc-gen4"
+rev = "aceca4eeb5a79092eabefaa75fcb72b701d02205"
+
+# Keep Mathlib last so its pinned transitive dependency revisions take precedence.
+[[require]]
+name = "mathlib"
+git = "https://github.com/leanprover-community/mathlib4.git"
+rev = "v4.33.1"
+
+[[lean_lib]]
+name = "LeanRegression"

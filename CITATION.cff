@@ -1,0 +1,19 @@
+cff-version: 1.2.0
+message: "If you use Lean Regression, please cite the archived release matching your dependency."
+title: "Lean Regression: formally verified regression theory in Lean 4"
+type: software
+authors:
+  - family-names: "Li"
+    given-names: "Ethan"
+    alias: "ethanxli"
+repository-code: "https://github.com/ethanxli/lean-regression"
+url: "https://ethanxli.github.io/lean-regression/blueprint/"
+license: Apache-2.0
+version: 0.1.0
+keywords:
+  - Lean 4
+  - formal verification
+  - regression
+  - econometrics
+  - Gauss-Markov theorem
+  - Frisch-Waugh-Lovell theorem

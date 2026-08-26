@@ -1,0 +1,13 @@
+/.lake/
+/blueprint/print/
+/blueprint/web/
+/generated_site/
+/lakefile.olean
+*.aux
+*.fls
+*.fdb_latexmk
+*.log
+*.out
+*.toc
+.DS_Store
+Thumbs.db
