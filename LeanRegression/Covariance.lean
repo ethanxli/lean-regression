@@ -133,7 +133,7 @@ theorem covarianceBilin_estimator_responseLaw
     (β : P) (A : O →L[ℝ] P) :
     covarianceBilin ((D.responseLaw μ β).map A) = estimatorCovariance μ A := by
   let : IsProbabilityMeasure (D.responseLaw μ β) :=
-    Measure.isProbabilityMeasure_map (by fun_prop)
+    (Measure.isProbabilityMeasure_map_iff (by fun_prop)).mpr inferInstance
   rw [← estimatorCovariance_eq_covarianceBilin_map (D.responseLaw_memLp hμ β) A,
     estimatorCovariance_responseLaw (D := D)]
 
@@ -171,4 +171,3 @@ end FixedDesign
 end
 
 end LeanRegression
-
