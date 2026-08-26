@@ -1,0 +1,16 @@
+div.theorem_thmcontent,
+div.proposition_thmcontent {
+  border-left: .15rem solid black;
+  padding-left: .75rem;
+}
+
+div.lemma_thmcontent,
+div.corollary_thmcontent {
+  border-left: .1rem solid black;
+  padding-left: .75rem;
+}
+
+div.proof_content {
+  border-left: .08rem solid grey;
+  padding-left: .75rem;
+}
