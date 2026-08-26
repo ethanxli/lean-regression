@@ -26,11 +26,19 @@ jobs:
             https://raw.githubusercontent.com/leanprover-community/mathlib4/master/lean-toolchain \
             --output lean-toolchain
           sed --in-place '0,/rev = "v[^"]*"/s//rev = "master"/' lakefile.toml
-          rm -f lake-manifest.json
 
-      - name: Build against Mathlib master
+      - name: Install Mathlib master's Lean toolchain
         uses: leanprover/lean-action@38fbc41a8c28c4cbaec22d7f7de508ec2e7c0dd9 # v1.5.0
         with:
-          build: true
-          lint: false
+          auto-config: false
+          build: false
+          use-github-cache: false
           use-mathlib-cache: false
+
+      - name: Resolve and build against Mathlib master
+        shell: bash
+        run: |
+          rm -f lake-manifest.json
+          lake update
+          lake exe cache get
+          lake build LeanRegression
